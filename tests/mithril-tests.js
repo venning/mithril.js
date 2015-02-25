@@ -147,7 +147,7 @@ function testMithril(mock) {
 	test(function() {
 		var root = mock.document.createElement("div")
 		m.render(root, m("div", [undefined]))
-		return root.childNodes[0].childNodes[0].nodeValue === ""
+		return root.childNodes[0].childNodes.length == 0
 	})
 	test(function() {
 		var root = mock.document.createElement("div")
@@ -170,19 +170,19 @@ function testMithril(mock) {
 		var root = mock.document.createElement("div")
 		m.render(root, m("ul", [m("li")]))
 		m.render(root, m("ul", [m("li"), undefined]))
-		return root.childNodes[0].childNodes[1].nodeValue === ""
+		return root.childNodes[0].childNodes.length == 1
 	})
 	test(function() {
 		var root = mock.document.createElement("div")
 		m.render(root, m("ul", [m("li"), m("li")]))
 		m.render(root, m("ul", [m("li"), undefined]))
-		return root.childNodes[0].childNodes.length == 2 && root.childNodes[0].childNodes[1].nodeValue === ""
+		return root.childNodes[0].childNodes.length == 1
 	})
 	test(function() {
 		var root = mock.document.createElement("div")
 		m.render(root, m("ul", [m("li")]))
 		m.render(root, m("ul", [undefined]))
-		return root.childNodes[0].childNodes[0].nodeValue === ""
+		return root.childNodes[0].childNodes.length == 0
 	})
 	test(function() {
 		var root = mock.document.createElement("div")
@@ -365,18 +365,18 @@ function testMithril(mock) {
 		m.render(root, m("div", [m("button"), m("ul")]))
 		var valueBefore = root.childNodes[0].childNodes[0].nodeName
 		m.render(root, m("div", [undefined, m("ul")]))
-		var valueAfter = root.childNodes[0].childNodes[0].nodeValue
-		return valueBefore === "BUTTON" && valueAfter === ""
+		var valueAfter = root.childNodes[0].childNodes[0].nodeName
+		return valueBefore === "BUTTON" && valueAfter === "UL"
 	})
 	test(function() {
 		var root = mock.document.createElement("div")
 		m.render(root, m("div", [m("ul"), undefined]))
 		var valueBefore1 = root.childNodes[0].childNodes[0].nodeName
-		var valueBefore2 = root.childNodes[0].childNodes[1].nodeValue
+		var valueBefore2 = root.childNodes[0].childNodes.length
 		m.render(root, m("div", [undefined, m("ul")]))
-		var valueAfter1 = root.childNodes[0].childNodes[0].nodeValue
-		var valueAfter2 = root.childNodes[0].childNodes[1].nodeName
-		return valueBefore1 === "UL" && valueAfter1 === "" && valueBefore2 === "" && valueAfter2 === "UL"
+		var valueAfter1 = root.childNodes[0].childNodes[0].nodeName
+		var valueAfter2 = root.childNodes[0].childNodes.length
+		return valueBefore1 === "UL" && valueAfter1 === "UL" && valueBefore2 == 1 && valueAfter2 === 1
 	})
 	test(function() {
 		//https://github.com/lhorie/mithril.js/issues/79

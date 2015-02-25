@@ -112,6 +112,7 @@ var m = (function app(window, undefined) {
 		}
 
 		if (dataType === ARRAY) {
+			var shouldFilter = false
 			//recursively flatten array
 			for (var i = 0, len = data.length; i < len; i++) {
 				if (type.call(data[i]) === ARRAY) {
@@ -119,7 +120,9 @@ var m = (function app(window, undefined) {
 					i-- //check current index again and flatten until there are no more nested arrays at that index
 					len = data.length
 				}
+				else if (data[i] == null) shouldFilter = true
 			}
+			if (shouldFilter) data = data.filter(function(item) {return item != null})
 
 			var nodes = [], intact = cached.length === data.length, subArrayCount = 0;
 
