@@ -840,6 +840,7 @@ var m = (function app(window, undefined) {
 			redrawing = forcing = false;
 		}
 	};
+	var limiter;
 	m.redraw.strategy = m.prop();
 	function redraw() {
 		if (computePreRedrawHook) {
@@ -848,11 +849,13 @@ var m = (function app(window, undefined) {
 		}
 		forEach(roots, function (root, i) {
 			var component = components[i];
+			if (limiter && ! limiter(component)) return;
 			if (controllers[i]) {
 				var args = [controllers[i]];
 				m.render(root, component.view ? component.view(controllers[i], args) : "");
 			}
 		});
+		limiter = null;
 		//after rendering within a routed context, we need to scroll back to the top, and fetch the document title for history.pushState
 		if (computePostRedrawHook) {
 			computePostRedrawHook();
@@ -880,6 +883,23 @@ var m = (function app(window, undefined) {
 		}
 		else m.endComputation();
 	}
+
+	m.only = function(limit, handler) {
+		return function() { // the handler that is bound to the node
+			if (isFunction(limit)) { // dynamically determine which components to redraw
+				limiter = limit;
+			} else if (isArray(limit)) { // redraw only within list of components
+				limiter = function(comp) {
+					return ~limit.indexOf(comp);
+				};
+			} else {
+				limiter = function(comp) { // redraw only this component
+					return comp === limit;
+				};
+			}
+			return handler.apply(this, arguments); // TODO is this correct thisArg?
+		};
+	};
 
 	m.withAttr = function(prop, withAttrCallback, callbackThis) {
 		return function(e) {
